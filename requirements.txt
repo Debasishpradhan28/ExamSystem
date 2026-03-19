@@ -5,3 +5,4 @@ Flask-Talisman
 PyPDF2 
 python-dotenv
 gunicorn
+flask-bcrypt
