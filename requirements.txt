@@ -1,0 +1,10 @@
+Flask
+Flask-SQLAlchemy
+
+Flask-Login
+
+PyPDF2 (for your VSSUT paper parser)
+
+python-dotenv
+
+gunicorn

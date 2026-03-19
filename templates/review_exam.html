@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Review AI-Generated Exam: {{ exam.title }}</h2>
+        <span class="badge bg-primary">Source: {{ exam.questions|length }} Questions Found</span>
+    </div>
+
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> AI might have picked up headers or instructions. <strong>Delete or edit</strong> them below before finalizing.
+    </div>
+
+    <form method="POST">
+        {% for q in exam.questions %}
+        <div class="card mb-3 border-start border-primary border-4 shadow-sm">
+            <div class="card-body">
+                <input type="hidden" name="q_id[]" value="{{ q.id }}">
+                
+                <div class="row">
+                    <div class="col-md-9">
+                        <label class="form-label small text-muted">Question Text</label>
+                        <textarea name="q_text[]" class="form-control mb-2" rows="2">{{ q.question_text }}</textarea>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small text-muted">Weightage (Marks)</label>
+                        <input type="number" name="q_marks[]" class="form-control" value="{{ q.marks }}">
+                        <div class="mt-2 text-end">
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('.card').remove()">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="sticky-bottom bg-white p-3 border-top text-center shadow-lg mt-5">
+            <button type="submit" class="btn btn-success btn-lg px-5">Finalize Exam & Publish to Students</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">AI Exam Creator: Upload PDF</h5>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('upload_paper') }}" method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label class="form-label font-weight-bold">Exam Title</label>
+                        <input type="text" name="title" class="form-control" placeholder="e.g. Mid-Sem 2026" required>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Start Time</label>
+                            <input type="datetime-local" name="start_time" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">End Time</label>
+                            <input type="datetime-local" name="end_time" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+    <label class="form-label">Duration (Minutes)</label>
+    <input type="number" name="duration" class="form-control" placeholder="e.g., 90" required>
+</div>
+
+                    <div class="mb-4">
+                        <label class="form-label font-weight-bold">Upload Question Paper (PDF)</label>
+                        <input type="file" name="paper" class="form-control" accept=".pdf" required>
+                        <small class="text-muted">Ensure your PDF has a clear format (e.g., 1. Question? (a) Opt1 ...)</small>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-2">
+                        Analyze Paper & Generate Exam
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

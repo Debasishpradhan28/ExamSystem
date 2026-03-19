@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>Submissions for Exam ID: {{ exam_id }}</h3>
+        <a href="{{ url_for('teacher_dashboard') }}" class="btn btn-outline-secondary btn-sm">Back to Dashboard</a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Current Score</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for result in results %}
+                    <tr>
+                        <td>{{ result.student.username }}</td>
+                        <td>{{ result.total_score }}</td>
+                        <td>
+                            {% if result.status == 'Pending Review' %}
+                                <span class="badge bg-warning text-dark">Pending Review</span>
+                            {% else %}
+                                <span class="badge bg-success">Completed</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('grade_student', exam_id=exam_id, student_id=result.student_id) }}" 
+                               class="btn btn-primary btn-sm">
+                               View & Grade
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center py-4 text-muted">No submissions yet for this exam.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

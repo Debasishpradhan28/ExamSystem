@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block content %}
+<h3>Grading: {{ student.username }}</h3>
+<form method="POST">
+    {% for ans in answers %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <h6>Question: {{ ans.question.question_text }}</h6>
+            <p class="bg-light p-3 border"><strong>Student Answer:</strong> {{ ans.answer_text }}</p>
+            
+            <div class="col-md-2">
+                <label class="form-label">Award Marks:</label>
+                <input type="number" name="marks_{{ ans.id }}" value="{{ ans.marks_awarded }}" class="form-control">
+            </div>
+        </div>
+    </div>
+    <div class="alert alert-{% if result.tab_switches > 0 %}danger{% else %}success{% endif %}">
+    <h5>Security Audit Report</h5>
+    <p><strong>Tab Switches:</strong> {{ result.tab_switches }} / 3</p>
+    <p><strong>Detailed Log:</strong> {{ result.cheating_report }}</p>
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary w-100">Save Final Grades</button>
+</form>
+{% endblock %}

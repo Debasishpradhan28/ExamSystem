@@ -1,0 +1,144 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container-fluid" id="examArea">
+    <div class="d-flex justify-content-between align-items-center mb-4 sticky-top bg-white py-3 border-bottom">
+        <h4>{{ exam.title }}</h4>
+        <div class="h4 text-danger font-monospace" id="timer">--:--</div>
+    </div>
+    <div class="sticky-top bg-white border-bottom py-3 mb-4 d-flex justify-content-between align-items-center">
+    <div>
+        <h4>{{ exam.title }}</h4>
+        <span class="badge bg-secondary">Total Marks: {{ total_marks }}</span>
+    </div>
+    <div class="h4 text-danger font-monospace" id="timer">--:--</div>
+</div>
+
+    <form id="examForm" action="{{ url_for('start_exam', exam_id=exam.id) }}" method="POST">
+        {% for q in exam.questions %}
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                <h5 class="mb-3">Q{{ loop.index }}. {{ q.question_text }}</h5>
+                {% for q in exam.questions %}
+<div class="card mb-4 shadow-sm">
+    <div class="card-body">
+        <div class="d-flex justify-content-between">
+            <h5 class="mb-3">Q{{ loop.index }}. {{ q.question_text }}</h5>
+            <span class="text-muted small">[{{ q.marks }} Marks]</span>
+        </div>
+        </div>
+</div>
+{% endfor %}
+                
+                {% if q.q_type == 'mcq' %}
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" name="q_{{ q.id }}" value="A">
+                        <label class="form-check-label">{{ q.opt_a }}</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" name="q_{{ q.id }}" value="B">
+                        <label class="form-check-label">{{ q.opt_b }}</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" name="q_{{ q.id }}" value="C">
+                        <label class="form-check-label">{{ q.opt_c }}</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" name="q_{{ q.id }}" value="D">
+                        <label class="form-check-label">{{ q.opt_d }}</label>
+                    </div>
+                {% elif q.q_type == 'short' %}
+                    <input type="text" name="q_{{ q.id }}" class="form-control" placeholder="Type your short answer here...">
+                {% else %}
+                    <textarea name="q_{{ q.id }}" class="form-control" rows="5" placeholder="Write your detailed answer..."></textarea>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+        
+        <button type="submit" class="btn btn-primary btn-lg w-100 mb-5">Submit Final Answers</button>
+    </form>
+</div>
+
+<script>
+    //timer logic
+    let timeInMinutes = parseInt("{{ exam.duration }}");
+    let timeInSeconds = timeInMinutes * 60;
+    const display = document.querySelector('#timer');
+
+    setInterval(() => {
+        let mins = Math.floor(timeInSeconds / 60);
+        let secs = timeInSeconds % 60;
+        display.textContent = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        if (timeInSeconds > 0) timeInSeconds--;
+        else document.getElementById('examForm').submit();
+    }, 1000);
+    let warningCount = 0;
+    let cheatLogs = [];
+
+    // 1. Fullscreen Enforcement
+    function enterFullScreen() {
+        let elem = document.documentElement;
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        }
+        document.getElementById('lockdown-overlay').style.display = 'none';
+    }
+
+    document.addEventListener('fullscreenchange', () => {
+        if (!document.fullscreenElement) {
+            document.getElementById('lockdown-overlay').style.display = 'block';
+            logEvent("Exited Fullscreen Mode");
+        }
+    });
+
+    // 2. Tab Switch Detection (Visibility API)
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            warningCount++;
+            document.getElementById('tab_switches').value = warningCount;
+            logEvent("Tab/Window Switch Detected");
+            
+            if (warningCount >= 3) {
+                alert("CRITICAL WARNING: 3rd violation detected. Auto-submitting exam.");
+                finalizeAndSubmit("AUTO-SUBMIT: Maximum tab switches reached.");
+            } else {
+                alert(`WARNING ${warningCount}/3: Do not switch tabs! Your session is being recorded.`);
+            }
+        }
+    });
+
+    // 3. Right-Click & Copy-Paste Block
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('copy', e => e.preventDefault());
+    document.addEventListener('paste', e => e.preventDefault());
+
+    function logEvent(msg) {
+        let time = new Date().toLocaleTimeString();
+        cheatLogs.push(`[${time}] ${msg}`);
+        document.getElementById('cheating_report').value = cheatLogs.join(" | ");
+    }
+
+    function finalizeAndSubmit(reason = "Normal Submission") {
+        logEvent(reason);
+        document.getElementById('examForm').submit();
+    }
+
+    function confirmSubmit() {
+        if(confirm("Are you sure you want to submit your final answers?")) {
+            finalizeAndSubmit("Manual Submission");
+        }
+    }
+
+    // Auto-start Fullscreen
+    window.onload = () => { alert("Click OK to enter secure exam mode."); enterFullScreen(); };
+</script>
+{% endblock %}
+<style>
+    /* Prevent text selection */
+    body {
+        -webkit-user-select: none; /* Safari */
+        -ms-user-select: none; /* IE 10 and Consumer Preview */
+        user-select: none; /* Standard syntax */
+    }
+</style>
+

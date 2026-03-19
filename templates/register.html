@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card border-{{ theme_color }} shadow">
+            <div class="card-header bg-{{ theme_color }} text-white text-center py-3">
+                <h4 class="mb-0">{{ role.upper() }} REGISTRATION</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Full Name / Username</label>
+                        <input type="text" name="username" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" name="email" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Select Department</label>
+                        <select name="dept_id" class="form-select" required>
+                            {% for dept in departments %}
+                                <option value="{{ dept.id }}">{{ dept.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    {% if role == 'teacher' %}
+                    <div class="mb-3">
+                        <label class="form-label text-danger font-weight-bold">Admin Authorization Code</label>
+                        <input type="text" name="auth_code" class="form-control border-danger" placeholder="Enter 8-digit key" required>
+                        <div class="form-text">Teachers must obtain a unique key from the Admin.</div>
+                    </div>
+                    {% endif %}
+
+                    <div class="mb-4">
+                        <label class="form-label">Password</label>
+                        <input type="password" name="password" class="form-control" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-{{ theme_color }} w-100 py-2">
+                        Register as {{ role.capitalize() }}
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div class="text-center mt-3">
+            <a href="{{ url_for('login', role=role) }}" class="text-muted small text-decoration-none">Already have an account? Login</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

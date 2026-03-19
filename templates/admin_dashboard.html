@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2 class="mb-4">University Control Panel <span class="badge bg-danger">Admin</span></h2>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Manage Departments</h5>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('add_dept') }}" method="POST" class="d-flex mb-3">
+                    <input type="text" name="dept_name" class="form-control me-2" placeholder="e.g. CSE" required>
+                    <button type="submit" class="btn btn-success">Add</button>
+                </form>
+                <ul class="list-group">
+                    {% for dept in departments %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        {{ dept.name }}
+                        <span class="badge bg-secondary">{{ dept.users|length }} Users</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Teacher Registration Codes</h5>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('generate_code') }}" method="POST" class="mb-3">
+                    <button type="submit" class="btn btn-primary w-100">Generate New Key</button>
+                </form>
+                <div style="max-height: 200px; overflow-y: auto;">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for c in codes %}
+                            <tr>
+                                <td class="font-monospace">{{ c.code }}</td>
+                                <td>
+                                    {% if c.is_used %}
+                                        <span class="text-danger">Used</span>
+                                    {% else %}
+                                        <span class="text-success">Active</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

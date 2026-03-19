@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-4">
+        <div class="card border-{{ theme_color }} shadow">
+            <div class="card-header bg-{{ theme_color }} text-white text-center py-3">
+                <h4 class="mb-0">{{ role.upper() }} LOGIN</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">University Email</label>
+                        <input type="email" name="email" class="form-control border-{{ theme_color }}" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Password</label>
+                        <input type="password" name="password" class="form-control border-{{ theme_color }}" required>
+                    </div>
+                    <button type="submit" class="btn btn-{{ theme_color }} w-100 py-2">
+                        Enter {{ role.capitalize() }} Portal
+                    </button>
+                </form>
+            </div>
+            {% if role == 'teacher' or role == 'student' %}
+            <div class="card-footer bg-light text-center">
+                <small>New here? <a href="{{ url_for('register', role=role) }}" class="text-{{ theme_color }}">Register Now</a></small>
+            </div>
+            {% endif %}
+        </div>
+        <div class="text-center mt-3">
+            <a href="/" class="text-muted small text-decoration-none">← Back to Role Selection</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
