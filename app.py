@@ -423,14 +423,28 @@ def student_results():
     
     return render_template('student_results.html', results=my_results)
 # --- DB INITIALIZATION ---
+# --- DB INITIALIZATION & PRODUCTION CONFIG ---
+import os
+
+# 1. Ensure the 'instance' folder exists for SQLite
+if not os.path.exists(app.instance_path):
+    os.makedirs(app.instance_path)
+
+# 2. Initialize Database (This runs on Render startup)
+with app.app_context():
+    db.create_all()
+    if not User.query.filter_by(role='admin').first():
+        # Using a hashed password for your VSSUT Admin
+        hp = bcrypt.generate_password_hash('admin123').decode('utf-8')
+        db.session.add(User(username='MainAdmin', email='admin@vssut.ac.in', password=hp, role='admin'))
+        
+        depts = ['Computer Science', 'Electrical Eng', 'Mechanical Eng']
+        for d in depts:
+            if not Department.query.filter_by(name=d).first():
+                db.session.add(Department(name=d))
+        db.session.commit()
+
+# 3. Handle Port for Render/Gunicorn
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-        if not User.query.filter_by(role='admin').first():
-            hp = bcrypt.generate_password_hash('admin123').decode('utf-8')
-            db.session.add(User(username='MainAdmin', email='admin@vssut.ac.in', password=hp, role='admin'))
-            depts = ['Computer Science', 'Electrical Eng', 'Mechanical Eng']
-            for d in depts:
-                if not Department.query.filter_by(name=d).first(): db.session.add(Department(name=d))
-            db.session.commit()
-    app.run(debug=True)
+    # Local development settings
+    app.run(debug=True, host='127.0.0.1', port=5000)
