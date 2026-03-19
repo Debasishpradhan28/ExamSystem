@@ -3,7 +3,7 @@ Flask-SQLAlchemy
 
 Flask-Login
 
-PyPDF2 (for your VSSUT paper parser)
+PyPDF2 
 
 python-dotenv
 
