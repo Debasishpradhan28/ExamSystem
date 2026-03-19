@@ -1,0 +1,33 @@
+# Environment variables (Secret keys, API tokens)
+.env
+
+# Python virtual environment
+venv/
+env/
+ENV/
+
+# SQLite database files
+*.db
+instance/
+
+# Uploaded files (if you save PDFs to a local folder)
+uploads/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / Build folders
+dist/
+build/
+*.egg-info/
+
+# VS Code settings
+.vscode/
+
+# macOS system files
+.DS_Store
+
+# Windows system files
+Thumbs.db
